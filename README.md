@@ -15,5 +15,7 @@ python.exe -m pip install --upgrade pip  (optional)
 django-admin --help (if want know more about commands)
 django-admin startproject project . (note: I used . for not created 2 equals folders)
 
+python manage.py runserver 
 
+python manage.py migrate  (make your migration when necessary )
 
