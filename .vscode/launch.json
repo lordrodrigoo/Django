@@ -8,7 +8,7 @@
         {
             "name": "Python Debugger: Django",
             "type": "debugpy",
-            "request": "launch",3
+            "request": "launch",
             "args": [
                 "runserver"
             ],
