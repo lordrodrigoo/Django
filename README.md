@@ -19,3 +19,12 @@ python manage.py runserver
 
 python manage.py migrate  (make your migration when necessary )
 
+
+
+# About testing
+-- For use coverage:
+    pip install coverage
+    coverage run -m pytest
+
+-- for visualization:
+    coverage html (crete a folder htmlvoc (into this folder you can access the file index.com ))
