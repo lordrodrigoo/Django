@@ -4,7 +4,6 @@ from django.db.models import Q
 from recipes.models import Recipe
 from django.core.paginator import Paginator
 from utils.pagination import make_pagination
-from django.contrib import messages
 
 import os
 # Create your views here.
@@ -13,8 +12,6 @@ PER_PAGE = int(os.environ.get('PER_PAGE'))
 
 def home(request):
     recipes = Recipe.objects.filter(is_published=True,).order_by('-id')
-
-    messages.success(request, 'Opa, Você pesquisou algo...')
 
     page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE )
 
