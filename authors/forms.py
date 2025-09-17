@@ -33,13 +33,13 @@ class RegisterForm(forms.ModelForm):
         add_placeholder(self.fields['email'], 'Your e-mail')
         add_placeholder(self.fields['first_name'], 'Ex.: John')
         add_placeholder(self.fields['last_name'], 'Ex.: Doe')
-        add_attr(self.fields['username'], 'css', 'a-css-class')
+        add_placeholder(self.fields['password'], 'Type your password')
+        add_placeholder(self.fields['ConfirmPassword'], 'Confirm your password')
+
 
     password = forms.CharField(
         required=True,
-        widget=forms.PasswordInput(attrs={
-            'placeholder': 'Your password'
-        }),
+        widget=forms.PasswordInput(),
         error_messages={
             'required': 'Password must not be empty'
         },
@@ -52,9 +52,7 @@ class RegisterForm(forms.ModelForm):
     )
     ConfirmPassword = forms.CharField(
         required=True,
-        widget=forms.PasswordInput(attrs={
-            'placeholder': 'Repeat your password'
-        })
+        widget=forms.PasswordInput()
     )
 
     class Meta:
@@ -66,4 +64,19 @@ class RegisterForm(forms.ModelForm):
             'email',
             'password',
         ]
-        
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        password = cleaned_data.get('password')
+        password2 = cleaned_data.get('ConfirmPassword')
+
+        if password != password2:
+            password_confirmation_error = ValidationError(
+                'Both passwords must be equals',
+                code='invalid'
+            )
+            raise ValidationError({
+                'password': password_confirmation_error,
+                'ConfirmPassword': [password_confirmation_error],
+            })
