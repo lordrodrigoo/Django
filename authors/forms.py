@@ -48,11 +48,13 @@ class RegisterForm(forms.ModelForm):
             'one lowercase letter and one number. The length should be '
             'at least 8 characters.'
         ),
-        validators=[strong_password]
+        validators=[strong_password],
+        label='Password'
     )
     ConfirmPassword = forms.CharField(
         required=True,
-        widget=forms.PasswordInput()
+        widget=forms.PasswordInput(),
+        label='Confirm Password'
     )
 
     class Meta:
@@ -62,12 +64,11 @@ class RegisterForm(forms.ModelForm):
             'last_name',
             'username',
             'email',
-            'password',
         ]
 
     def clean(self):
-        cleaned_data = super().clean()
 
+        cleaned_data = super().clean()
         password = cleaned_data.get('password')
         password2 = cleaned_data.get('ConfirmPassword')
 
