@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from .forms import RegisterForm
 # Create your views here.
@@ -10,6 +11,7 @@ def register_view(request):
     form = RegisterForm(register_form_data)  # Bound Form 
     return render(request, 'author/pages/register_view.html', {
         'form': form,
+        'form_action': reverse('authors:create')
     })
 
 def register_create(request):
@@ -22,8 +24,8 @@ def register_create(request):
 
     if form.is_valid():
         user = form.save(commit=False)
-        user.set_password(user.password) # AQUI 
-        user.save()   # AQUI 
+        user.set_password(user.password)
+        user.save() 
         
         messages.success(request, 'Your user is created, please log in.')
 
