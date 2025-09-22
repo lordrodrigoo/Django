@@ -89,9 +89,9 @@ class RegisterForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
-        password2 = cleaned_data.get('ConfirmPassword')
+        ConfirmPassword = cleaned_data.get('ConfirmPassword')
 
-        if password != password2:
+        if password != ConfirmPassword:
             password_confirmation_error = ValidationError(
                 'Both passwords must be equals',
                 code='invalid'
