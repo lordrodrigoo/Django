@@ -1,9 +1,9 @@
 from utils.browser import make_chrome_browser
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 import time
+from recipes.tests.test_recipe_base import RecipeMixin
 
-
-class RecipeBaseFunctionalTest(StaticLiveServerTestCase):
+class RecipeBaseFunctionalTest(StaticLiveServerTestCase, RecipeMixin):
     def setUp(self):
         self.browser = make_chrome_browser()
         return super().setUp()
