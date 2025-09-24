@@ -1,10 +1,11 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-
+import pytest
 from .base import RecipeBaseFunctionalTest
 import pytest
 from recipes.tests.test_recipe_base import RecipeMixin
 from unittest.mock import patch
+
 
 @pytest.mark.functional_test
 class RecipeHomePageFunctionalTest(RecipeBaseFunctionalTest, RecipeMixin):
@@ -36,6 +37,7 @@ class RecipeHomePageFunctionalTest(RecipeBaseFunctionalTest, RecipeMixin):
         search_input.send_keys(title_needed)
         search_input.send_keys(Keys.ENTER)
 
+        self.sleep(3)
         # The user sees what they were looking for on the page
         self.assertIn(
             title_needed,

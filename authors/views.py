@@ -64,17 +64,20 @@ def login_create(request):
         else:   
             messages.error(request, 'Invalid Credentials')
     else:
-        messages.error(request, 'Error to validate form data')
+        messages.error(request, 'Invalid username or password')
     
     return redirect(login_url)
 
 @login_required(login_url='authors:login', redirect_field_name='next')
 def logout_view(request):
     if not request.POST:
+        messages.error(request, 'Invalid logout request')
         return redirect(reverse('authors:login'))
     
     if request.POST.get('username') != request.user.username:
-        return redirect(reverse('authors:login'))
+        messages.error(request, 'Invalid logout user')
+        return redirect(reverse('authors:login')) 
 
+    messages.success(request, 'Logged out successfully')
     logout(request)
     return redirect(reverse('authors:login'))
