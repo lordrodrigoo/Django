@@ -14,12 +14,14 @@ class RecipeHomePageFunctionalTest(RecipeBaseFunctionalTest, RecipeMixin):
         body = self.browser.find_element(By.TAG_NAME, 'body')
         self.assertIn('No recipes found here', body.text)
         
+        
 
     @patch('recipes.views.PER_PAGE', new=2)
     def test_recipe_search_input_can_find_correct_recipes(self):
         recipes = self.make_recipe_in_batch()
 
         title_needed = 'This is what I need'
+
         recipes[0].title = title_needed
         recipes[0].save()
 
@@ -39,10 +41,11 @@ class RecipeHomePageFunctionalTest(RecipeBaseFunctionalTest, RecipeMixin):
         # The user sees what they were looking for on the page
         self.assertIn(
             title_needed,
-            self.browser.find_element(By.TAG_NAME, 'body').text,
+            self.browser.find_element(By.CLASS_NAME, 'main-content-list').text,
         )
         
-
+        
+        
     @patch('recipes.views.PER_PAGE', new=2)
     def test_recipe_home_page_pagination(self):
         self.make_recipe_in_batch()
@@ -62,6 +65,3 @@ class RecipeHomePageFunctionalTest(RecipeBaseFunctionalTest, RecipeMixin):
             len(self.browser.find_elements(By.CLASS_NAME, 'recipe')),
             2
         )
-
-
-        self.sleep(10)
