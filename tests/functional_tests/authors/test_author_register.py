@@ -76,6 +76,7 @@ class AuthorsRegisterTest(AuthorsBaseTest):
 
     def test_user_valid_data_register_successfully(self):
         self.browser.get(self.live_server_url + '/authors/register/')
+        
         form = self.get_form()
 
         self.get_by_placeholder(form, 'Ex.: John').send_keys('First Name')
