@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from recipes.models import Recipe
-from .forms import RegisterForm, LoginForm
+from authors.forms import RegisterForm, LoginForm
 from authors.forms.recipe_form import AuthorRecipeForm
 # Create your views here.
 
