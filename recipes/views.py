@@ -9,7 +9,7 @@ from recipes.models import Recipe
 
 
 # Create your views here.
-PER_PAGE = int(os.environ.get('PER_PAGE', 9))
+PER_PAGE = int(os.environ.get('PER_PAGE'))
 
 class RecipeListViewBase(ListView):
     model = Recipe

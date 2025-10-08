@@ -1,0 +1,75 @@
+###############################################################################
+# Replace
+# projeto_django to the name of the gunicorn file you want
+# ubuntu to your user name
+# app_repo to the folder name of your project
+# project to the folder name where you find a file called wsgi.py
+#
+###############################################################################
+# Criando o arquivo projeto_django.socket
+sudo nano /etc/systemd/system/projeto_django.socket
+
+###############################################################################
+# Conteúdo do arquivo
+[Unit]
+Description=gunicorn blog socket
+
+[Socket]
+ListenStream=/run/projeto_django.socket
+
+[Install]
+WantedBy=sockets.target
+
+###############################################################################
+# Criando o arquivo projeto_django.service
+sudo nano /etc/systemd/system/projeto_django.service
+
+###############################################################################
+# Conteúdo do arquivo
+[Unit]
+Description=Gunicorn daemon (You can change if you want)
+Requires=projeto_django.socket
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+Restart=on-failure
+EnvironmentFile=/home/ubuntu/app_repo/.env
+WorkingDirectory=/home/ubuntu/app_repo
+# --error-logfile --enable-stdio-inheritance --log-level and --capture-output
+# are all for debugging purposes.
+ExecStart=/home/ubuntu/app_repo/venv/bin/gunicorn \
+          --error-logfile /home/ubuntu/app_repo/gunicorn-error-log \
+          --enable-stdio-inheritance \
+          --log-level "debug" \
+          --capture-output \
+          --access-logfile - \
+          --workers 6 \
+          --bind unix:/run/projeto_django.socket \
+          project.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+###############################################################################
+# Ativando
+sudo systemctl start projeto_django.socket
+sudo systemctl enable projeto_django.socket
+
+# Checando
+sudo systemctl status projeto_django.socket
+curl --unix-socket /run/projeto_django.socket localhost
+sudo systemctl status projeto_django
+
+# Restarting
+sudo systemctl restart projeto_django.service
+sudo systemctl restart projeto_django.socket
+sudo systemctl restart projeto_django
+
+# After changing something
+sudo systemctl daemon-reload
+
+# Debugging
+sudo journalctl -u projeto_django.service
+sudo journalctl -u projeto_django.socket
