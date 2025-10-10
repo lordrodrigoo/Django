@@ -1,12 +1,6 @@
-Deploy
-Aqui estão os dados de referência para deploy de uma aplicação Django, de acordo com as aulas do meu curso de Django na Udemy.
 
 Criando um servidor
-Como vamos usar um servidor na nuvem (cloud server), é interessante que você utilize algum serviço gratuito para isso. Recomendo a Google Cloud Platform.
-
-Caso não tenha como usar a Google Cloud Platform, um servidor em máquina virtual também funciona perfeitamente. Porém, não será possível disponibilizar a aplicação online na Internet. VirtualBox (Windows, Linux e macOS intel), Parallels (macOS M1), UTM (macOS M1), são alguns dos softwares mencionados indicados para isso.
-
-Siga as instruções da aula para criar um servidor na Google Cloud Platform.
+Irei usar Amazon Aws
 
 Chaves SSH
 Para criar chaves ssh no seu computador, utilize o comando ssh-keygen. Se você já tem chaves SSH no computador e por algum motivo queira usar outra, use o comando:
@@ -86,8 +80,9 @@ git pull origin <branch>
 Criando o ambiente virtual
 cd  ~/app_repo
 git pull origin <branch>
-python3.9 -m venv venv
+python3.10 -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
 pip install psycopg2
 pip install gunicorn
+
