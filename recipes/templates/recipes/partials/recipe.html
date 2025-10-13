@@ -86,7 +86,7 @@
             {% for tag in recipe.tags.all %}
                 <a href="{% url "recipes:tag" tag.slug %}">
                     {{tag.name}}
-                </a> 
+                </a>, 
             {% endfor %}
         </p>
     
