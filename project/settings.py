@@ -29,9 +29,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'INSECURE')
 DEBUG = True if os.environ.get('DEBUG') == '1' else False
 
 ALLOWED_HOSTS = [
-    'receitas.daliabolosedoces.com.br',
-    'www.receitas.daliabolosedoces.com.br',
-    '18.214.238.221',  # IP do servidor para manutenção
+    '127.0.0.1',    
+    'localhost',       
 ]
 
 
