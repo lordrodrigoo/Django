@@ -3,6 +3,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from tag.models import Tag
+from collections import defaultdict
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -51,3 +53,17 @@ class Recipe(models.Model):
 
         return super().save(*args, **kwargs)
 
+
+    def clean(self, *args, **kwargs):
+        error_messages = defaultdict(list)
+
+        recipe_from_db = Recipe.objects.filter(
+            title__iexact=self.title
+        ).first()
+
+        if recipe_from_db:
+            if recipe_from_db.pk != self.pk:
+                error_messages['title'].append('There is already a recipe with this title.')
+
+        if error_messages:
+            raise ValidationError(error_messages)
