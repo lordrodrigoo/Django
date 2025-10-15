@@ -132,7 +132,7 @@ class RecipeListViewTag(RecipeListViewBase):
         page_title = f'{page_title} - Tag |'
 
         ctx.update({
-            'page_title': {page_title},
+            'page_title': page_title,
         })
         return ctx
         
