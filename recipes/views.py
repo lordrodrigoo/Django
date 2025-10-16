@@ -9,7 +9,8 @@ from django.forms.models import model_to_dict
 from tag.models import Tag
 
 from recipes.models import Recipe
-
+from django.utils import translation
+from django.utils.translation import gettext as _
 
 # Create your views here.
 PER_PAGE = int(os.environ.get('PER_PAGE'))
@@ -35,10 +36,13 @@ class RecipeListViewBase(ListView):
             ctx.get('recipes'),
             PER_PAGE
         )
+
+        html_language = translation.get_language()
         ctx.update(
             {
                 'recipes': page_obj,
-                'pagination_range': pagination_range
+                'pagination_range': pagination_range,
+                'html_language': html_language,
             }
         )
         return ctx
@@ -65,8 +69,10 @@ class RecipeListViewCategory(RecipeListViewBase):
     def get_context_data(self, *args, **kwargs):
         ctx = super().get_context_data(*args, **kwargs)
 
+        category_translation = _('Category')
+
         ctx.update({
-            'title': f'{ctx.get("recipes")[0].category.name} - Category | '
+            'title': f'{ctx.get("recipes")[0].category.name} - {category_translation} | '
         })
         return ctx
 

@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from tag.models import Tag
 from collections import defaultdict
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
@@ -16,17 +17,17 @@ class Category(models.Model):
 
 
 class Recipe(models.Model):
-    title = models.CharField(max_length=65)
-    description = models.CharField(max_length=165)
-    slug = models.SlugField(unique=True)
-    preparation_time = models.IntegerField()
-    preparation_time_unit = models.CharField(max_length=65)
-    servings = models.IntegerField()
-    servings_unit = models.CharField(max_length=65)
-    preparation_steps = models.TextField() 
+    title = models.CharField(max_length=65, verbose_name=_('Title'))
+    description = models.CharField(max_length=165, verbose_name=_('Description'))
+    slug = models.SlugField(unique=True, verbose_name=_('Slug'))
+    preparation_time = models.IntegerField(verbose_name=_('Preparation Time'))
+    preparation_time_unit = models.CharField(max_length=65, verbose_name=_('Preparation Time Unit'))
+    servings = models.IntegerField(verbose_name=_('Servings'))
+    servings_unit = models.CharField(max_length=65, verbose_name=_('Servings Unit'))
+    preparation_steps = models.TextField(verbose_name=_('Preparation Steps'))
     preparation_steps_is_html = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True) # No momento da criação ele gera uma data e coloca
-    updated_at = models.DateTimeField(auto_now=True) 
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created At'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated At'))
     is_published = models.BooleanField(default=False)
     cover = models.ImageField(upload_to='recipes/covers/%Y/%m/%d', blank=True, default='')
     
@@ -67,3 +68,8 @@ class Recipe(models.Model):
 
         if error_messages:
             raise ValidationError(error_messages)
+        
+    class Meta:
+        verbose_name = _('Recipe')
+        verbose_name_plural = _('Recipes')
+        ordering = ['-id']
