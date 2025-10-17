@@ -1,19 +1,37 @@
 import os
 
 from django.db.models import Q
-from django.http import Http404
-from django.views.generic import ListView, DetailView
-from utils.pagination import make_pagination
-from django.http import JsonResponse
+from django.db.models.aggregates import Count
 from django.forms.models import model_to_dict
-from tag.models import Tag
-
-from recipes.models import Recipe
+from django.http import JsonResponse
+from django.http.response import Http404
+from django.shortcuts import render
 from django.utils import translation
 from django.utils.translation import gettext as _
+from django.views.generic import DetailView, ListView
+from tag.models import Tag
+from utils.pagination import make_pagination
+
+from recipes.models import Recipe
 
 # Create your views here.
 PER_PAGE = int(os.environ.get('PER_PAGE'))
+
+def theory(request, *args, **kwargs):
+    recipes = Recipe.objects.get_published()
+    number_of_recipes = recipes.aggregate(number=Count('id'))
+
+    context = {
+        'recipes': recipes,
+        'number_of_recipes': number_of_recipes['number']
+    }
+
+    return render(
+        request,
+        'recipes/pages/theory.html',
+        context=context
+    )
+
 
 class RecipeListViewBase(ListView):
     model = Recipe

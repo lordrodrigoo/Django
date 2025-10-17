@@ -10,12 +10,14 @@ class RecipeModelTest(RecipeTestBase):
         return super().setUp()
 
     def make_recipe_no_default(self):
+        import uuid
+        unique_id = uuid.uuid4().hex[:8]  # Generate unique ID
         recipe = Recipe(
-            category=self.make_category(name='Test default Category'),
-            author=self.make_author(username='newuser'),
-            title='Recipe Title',
+            category=self.make_category(name=f'Test default Category {unique_id}'),
+            author=self.make_author(username=f'newuser{unique_id}'),
+            title=f'Recipe Title {unique_id}',
             description='Recipe Description',
-            slug='recipe-slug-for-no-defaults',
+            slug=f'recipe-slug-for-no-defaults-{unique_id}',
             preparation_time=10,
             preparation_time_unit='Minutos',
             servings=5,

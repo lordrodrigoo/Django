@@ -32,6 +32,8 @@ class AuthorsRegisterTest(AuthorsBaseTest):
             first_name_field = self.get_by_placeholder(form, 'Ex.: John')
             first_name_field.send_keys(' ')
             first_name_field.send_keys(Keys.ENTER)
+            # Wait a bit for the page to process
+            self.sleep(0.5)
             form = self.get_form()
             self.assertIn('Write your first name', form.text, )
         self.form_field_test_with_callback(callback)
@@ -42,6 +44,8 @@ class AuthorsRegisterTest(AuthorsBaseTest):
             last_name_field = self.get_by_placeholder(form, 'Ex.: Doe')
             last_name_field.send_keys(' ')
             last_name_field.send_keys(Keys.ENTER)
+            # Wait a bit for the page to process
+            self.sleep(0.5)
             form = self.get_form()
             self.assertIn('Write your last name', form.text, )
         self.form_field_test_with_callback(callback)
