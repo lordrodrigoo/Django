@@ -1,0 +1,34 @@
+[flake8]
+max-line-length = 88
+exclude = 
+    .git,
+    __pycache__,
+    venv,
+    migrations,
+    manage.py,
+    */settings/*
+ignore = 
+    E203,  # whitespace before ':'
+    E501,  # line too long (handled by black)
+    W503,  # line break before binary operator
+per-file-ignores =
+    __init__.py:F401
+    tests/*.py:E501
+
+[coverage:run]
+source = .
+omit = 
+    venv/*
+    */migrations/*
+    manage.py
+    */settings/*
+    */venv/*
+    */tests/*
+    */__pycache__/*
+
+[coverage:report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError

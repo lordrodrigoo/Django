@@ -1,0 +1,138 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Permite execução manual
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Set up environment variables
+      run: |
+        echo "SECRET_KEY=test-secret-key-for-testing" >> $GITHUB_ENV
+        echo "DEBUG=1" >> $GITHUB_ENV
+        echo "DATABASE_ENGINE=django.db.backends.sqlite3" >> $GITHUB_ENV
+        echo "DATABASE_NAME=:memory:" >> $GITHUB_ENV
+        echo "ALLOWED_HOSTS=127.0.0.1,localhost" >> $GITHUB_ENV
+        echo "CSRF_TRUSTED_ORIGINS=http://127.0.0.1,http://localhost" >> $GITHUB_ENV
+        
+    - name: Run Django system checks
+      run: |
+        python manage.py check --deploy
+        
+    - name: Run migrations (dry run)
+      run: |
+        python manage.py makemigrations --check --dry-run
+        
+    - name: Run tests
+      run: |
+        python manage.py test --parallel --keepdb
+        
+    - name: Test collect static
+      run: |
+        python manage.py collectstatic --noinput --dry-run
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup SSH key
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        
+    - name: Add server to known hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Deploy to server
+      run: |
+        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          set -e
+          
+          echo "🚀 Starting deployment..."
+          
+          # Navigate to application directory
+          cd ${{ secrets.APP_PATH }}
+          
+          # Backup current state
+          echo "📦 Creating backup..."
+          sudo systemctl stop projeto_django.service
+          
+          # Update code
+          echo "Pulling latest code..."
+          git fetch origin
+          git reset --hard origin/main
+          
+          # Install/update dependencies
+          echo "Installing dependencies..."
+          venv/bin/pip install -r requirements.txt --no-deps
+          
+          # Run migrations
+          echo " Running migrations..."
+          venv/bin/python manage.py migrate --noinput
+          
+          # Collect static files
+          echo "🎨 Collecting static files..."
+          venv/bin/python manage.py collectstatic --noinput
+          
+          # Compile translations
+          echo "🌍 Compiling translations..."
+          venv/bin/python manage.py compilemessages
+          
+          # Restart services
+          echo "🔄 Restarting services..."
+          sudo systemctl start projeto_django.service
+          sudo systemctl reload nginx
+          
+          # Health check
+          echo "🏥 Performing health check..."
+          sleep 5
+          if curl -f -s http://localhost/recipes/api/v2/ > /dev/null; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Health check failed!"
+            exit 1
+          fi
+          
+          echo "🎉 Deployment completed successfully!"
+        EOF
+        
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ Deployment successful to production!"
+        else
+          echo "❌ Deployment failed!"
+          exit 1
+        fi

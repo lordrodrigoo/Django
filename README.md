@@ -1,5 +1,28 @@
-# This content is about my course. So here I'll make some anotations that help me with the commands
-# My system is Windows, so all commands will be for Windows .
+# Django Recipe Application
+
+![Tests](https://github.com/your-username/your-repo/workflows/Tests%20and%20Quality%20Checks/badge.svg)
+![Deploy](https://github.com/your-username/your-repo/workflows/Deploy%20to%20Production/badge.svg)
+
+Uma aplicação Django completa para gerenciar receitas com sistema de autenticação, interface administrativa e API REST.
+
+## 🚀 Deploy Automatizado
+
+Este projeto utiliza GitHub Actions para deploy automatizado. Consulte [DEPLOY.md](DEPLOY.md) para instruções de configuração.
+
+## 🧪 Testes
+
+Execute os testes localmente:
+```bash
+python manage.py test
+```
+
+Com coverage:
+```bash
+coverage run manage.py test
+coverage report
+```
+
+## 📝 Anotações do Curso
 
 # Git and Git Hub
 ssh-keygen
