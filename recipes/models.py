@@ -95,8 +95,15 @@ class Recipe(models.Model):
     def save(self, *args, **kwargs):
         
         if not self.slug:
+            if not self.slug:
+                rand_letters = ''.join(SystemRandom().choices(
+                string.ascii_letters + string.digits,
+                k=5
+                )
+            )
+
+            self.slug = slugify(f'{self.title}-{rand_letters}')
             slug = f'{slugify(self.title)}'
-            self.slug = slug
 
         saved  = super().save(*args, **kwargs)
 
