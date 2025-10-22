@@ -1,81 +1,24 @@
-from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import serializers
-from django.shortcuts import get_object_or_404
+
 from tag.models import Tag
-from ..serializers import TagSerializer
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.viewsets import ModelViewSet
 
 from ..models import Recipe
-from ..serializers import RecipeSerializer
-from rest_framework import status
-
-@api_view(http_method_names=['GET', 'POST'])
-def recipe_api_list(request):
-    if request.method == 'GET':
-        recipes = Recipe.objects.get_published()
-        serializer = RecipeSerializer(
-            instance=recipes,
-            many=True,
-            context={'request': request},
-        )
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        serializer = RecipeSerializer(
-            data=request.data,
-            context={'request': request},)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(
-            author_id=1, category_id=1,
-            tags=[10,11]
-        )
-        
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED
-        )
+from ..serializers import RecipeSerializer, TagSerializer
+import os
 
 
-        return Response (serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PATCH', 'DELETE'])
-def recipe_api_detail(request, pk):
-    recipe = get_object_or_404(
-        Recipe.objects.get_published(),
-        pk=pk,
-        
-    )
+class RecipeAPIv2Pagination(PageNumberPagination):
+    page_size = int(os.environ.get('PER_PAGE', 10))
 
-    if request.method == 'GET':
-        serializer = RecipeSerializer(
-            instance=recipe,
-            many=False,
-            context={'request': request},
-        )
-        return Response(serializer.data)
-    elif request.method == 'PATCH':
-        serializer = RecipeSerializer(
-            instance=recipe,
-            data=request.data,
-            partial=True,
-            many=False,
-            context={'request': request},
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(
-            serializer.data,
-            
-        )
-
-    elif request.method == 'DELETE':
-        recipe.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-    
-
+class RecipeAPIv2ViewSet(ModelViewSet):
+    queryset = Recipe.objects.get_published()
+    serializer_class = RecipeSerializer
+    pagination_class = RecipeAPIv2Pagination
 
 
 @api_view()
