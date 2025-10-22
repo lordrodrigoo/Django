@@ -8,3 +8,4 @@ from .i18n import *
 from .messages import *
 from .assets import *
 from .debug_toolbal import *
+from .rest_framework import *
