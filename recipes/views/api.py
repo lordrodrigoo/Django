@@ -27,16 +27,7 @@ class RecipeAPIv2ViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        
-        category_id = self.request.query_params.get('category_id', '')
 
-        if category_id != '' and category_id.isnumeric():
-            qs = qs.filter(category_id=category_id)
-
-        return qs
-    
     def get_object(self):
         pk = self.kwargs.get('pk')
         obj = get_object_or_404(self.get_queryset(), pk=pk)
@@ -63,8 +54,6 @@ class RecipeAPIv2ViewSet(ModelViewSet):
         )
 
         
-
-
     def partial_update(self, request, *args, **kwargs):
         recipe = self.get_object()
         serializer = RecipeSerializer(
@@ -76,7 +65,9 @@ class RecipeAPIv2ViewSet(ModelViewSet):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
         return Response(serializer.data)
+    
 
 @api_view()
 def tag_api_detail(request, pk):
@@ -92,4 +83,3 @@ def tag_api_detail(request, pk):
     )
 
     return Response(serializer.data)
-    return Response(True)
