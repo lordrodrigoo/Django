@@ -27,6 +27,16 @@ class RecipeAPIv2ViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        
+        category_id = self.request.query_params.get('category_id', '')
+
+        if category_id != '' and category_id.isnumeric():
+            qs = qs.filter(category_id=category_id)
+
+        return qs
+
 
     def get_object(self):
         pk = self.kwargs.get('pk')
